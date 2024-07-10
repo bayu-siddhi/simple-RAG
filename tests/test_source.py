@@ -15,14 +15,14 @@ class SourceTestCase(unittest.TestCase):
         self.assertEqual(document.pdf_path, self.pdf_path_success)
 
     def test_load_pdf_failed(self) -> None:
-        """Test load PDF (failed)"""
+        """Test load PDF not found (failed)"""
         with self.assertRaises(FileNotFoundException):
             Source(pdf_path=self.pdf_path_failed)
 
     def test_open_and_read_pdf(self) -> None:
         """Test open and read (extract) all PDF pages to chunks"""
         document = Source(pdf_path=self.pdf_path_success)
-        document.open_and_read_pdf()
+        document.open_and_extract_pdf()
         self.assertIsInstance(document.content, list)
         self.assertIsInstance(document.content[0], dict)
         self.assertNotEquals(document.slice_size, 0)

@@ -20,28 +20,28 @@ class Source:
         self.__load_pdf()
         load_dotenv()
 
+    def open_and_extract_pdf(self) -> None:
+        nlp = English()
+        nlp.add_pipe('sentencizer')
+        document = pymupdf.open(filename=self.pdf_path, filetype='pdf')
+        for index, page in enumerate(document):
+            # Get text
+            text = page.get_text()
+            text = Helper.text_formatter(text)
+            # Split sentences
+            sentences = list(nlp(text).sents)
+            sentences = [str(sentence) for sentence in sentences]
+            num_sentences = len(sentences)
+            self.content.append({'page_index': index,
+                                 'text': text,
+                                 'sentences': sentences,
+                                 'num_sentences': num_sentences})
+        self.__chunking_sentence()
+        self.__separate_and_filter_chunks(int(os.getenv('MIN_TOKEN_LENGTH')))
+
     def __load_pdf(self) -> None:
         if not os.path.exists(self.pdf_path):
             raise FileNotFoundException(f"File {self.pdf_path} doesn't exist.")
-
-    def open_and_read_pdf(self) -> None:
-        document = pymupdf.open(filename=self.pdf_path, filetype='pdf')
-        for index, page in enumerate(document):
-            text = page.get_text()
-            text = Helper.text_formatter(text)
-            self.content.append({'page_index': index,
-                                 'text': text})
-        self.__split_sentence()
-        self.__chunking_sentence()
-        self.__filter_chunks(int(os.getenv('MIN_TOKEN_LENGTH')))
-
-    def __split_sentence(self) -> None:
-        nlp = English()
-        nlp.add_pipe('sentencizer')
-        for item in self.content:
-            item['sentences'] = list(nlp(item['text']).sents)
-            item['sentences'] = [str(sentence) for sentence in item['sentences']]
-            item['num_sentences'] = len(item['sentences'])
 
     def __chunking_sentence(self) -> None:
         page_sentence_count = [int(item['num_sentences']) for item in self.content]
@@ -52,14 +52,13 @@ class Source:
                 item['chunks'].append(item['sentences'][i:i + self.slice_size])
             item['num_chunks'] = len(item['chunks'])
 
-    def __filter_chunks(self, min_token_length: int) -> None:
+    def __separate_and_filter_chunks(self, min_token_length: int) -> None:
         for item in self.content:
             for sentence_chunk in item["chunks"]:
                 chunk_dict = dict()
                 chunk_dict['page_index'] = item['page_index']
                 # Join the sentences together into a paragraph
                 joined_sentence_chunk = "".join(sentence_chunk).replace("  ", " ").strip()
-                # Add space after dot (".A" -> ". A")
                 joined_sentence_chunk = re.sub(r'\.([A-Z])', r'. \1', joined_sentence_chunk)
                 chunk_dict["chunk"] = joined_sentence_chunk
                 # Get stats about the chunk, 1 token = ~4 characters
