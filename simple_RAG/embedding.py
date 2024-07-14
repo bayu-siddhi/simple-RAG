@@ -8,10 +8,12 @@ from simple_RAG.exception.file_not_found_exception import FileNotFoundException
 
 class Embedding:
 
-    def __init__(self) -> None:
-        self.device = Helper.set_device('cuda')
-        self.embedding: torch.Tensor = torch.Tensor()
-        self.df_embedding: pd.DataFrame = pd.DataFrame()
+    def __init__(self, device: str, embedding: list[dict] | torch.Tensor | None = None) -> None:
+        self.device = Helper.set_device(device, self.__class__.__name__)
+        self.embedding: torch.Tensor | None = None
+        self.df_embedding: pd.DataFrame | None = None
+        if embedding is not None:
+            self.add_new(embedding)
 
     def add_new(self, embedding: list[dict] | torch.Tensor) -> None:
         if isinstance(embedding, list):
