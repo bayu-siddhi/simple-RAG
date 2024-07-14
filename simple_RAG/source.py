@@ -11,16 +11,22 @@ from simple_RAG.exception.file_not_found_exception import FileNotFoundException
 
 class Source:
 
-    def __init__(self, pdf_path: str) -> None:
+    def __init__(self, pdf_path: str, min_token_length_per_chunk: int = 30) -> None:
         self.pdf_path: str = pdf_path
+        self.min_token_length_per_chunk = min_token_length_per_chunk
         self.content: list[dict] = list()
         self.all_chunks: list[dict] = list()
         self.filtered_chunks: list[dict] = list()
         self.slice_size: int = 0
-        self.__load_pdf()
-        load_dotenv()
 
-    def open_and_extract_pdf(self) -> None:
+        self.__load_pdf()
+        self.__open_and_extract_pdf()
+
+    def __load_pdf(self) -> None:
+        if not os.path.exists(self.pdf_path):
+            raise FileNotFoundException(f"File {self.pdf_path} doesn't exist.")
+
+    def __open_and_extract_pdf(self) -> None:
         nlp = English()
         nlp.add_pipe('sentencizer')
         document = pymupdf.open(filename=self.pdf_path, filetype='pdf')
@@ -37,11 +43,7 @@ class Source:
                                  'sentences': sentences,
                                  'num_sentences': num_sentences})
         self.__chunking_sentence()
-        self.__separate_and_filter_chunks(int(os.getenv('MIN_TOKEN_LENGTH')))
-
-    def __load_pdf(self) -> None:
-        if not os.path.exists(self.pdf_path):
-            raise FileNotFoundException(f"File {self.pdf_path} doesn't exist.")
+        self.__separate_and_filter_chunks(self.min_token_length_per_chunk)
 
     def __chunking_sentence(self) -> None:
         page_sentence_count = [int(item['num_sentences']) for item in self.content]
