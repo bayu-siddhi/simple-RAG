@@ -1,5 +1,4 @@
 import torch
-import pandas as pd
 
 
 class Helper:
@@ -16,3 +15,22 @@ class Helper:
         else:
             print(f"[INFO] {device} is not available, using {device_used} as the {from_class} device")
         return device_used
+
+    @staticmethod
+    def chat_template(role: str, content: str) -> list:
+        return [{
+            'role': role,
+            'content': content
+        }]
+
+    @staticmethod
+    def base_prompt(query: str, context: str) -> str:
+        return (
+            """User query: {query}
+Take time to analyze relevant sections from the context before providing your response.
+Do not include the analysis process, only the final answer. Ensure your answers are as detailed as possible.
+Now use the following context items to address the user's query:
+{context}
+Answer:
+"""
+        ).format(query=query, context=context)
