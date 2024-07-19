@@ -28,8 +28,8 @@ VERSION = read_version()
 SHORT_DESC = 'library to try using RAG from PDF files. Runs using the LLM model and embedding model from HuggingFace'
 LONG_DESC = read_file('README.md')
 URL = 'https://github.com/bayu-siddhi/simple-RAG'
-# AUTHOR = 'test'
-# EMAIL = 'test@test.test'
+AUTHOR = 'test'
+EMAIL = 'test@test.test'
 REQUIRES_PYTHON = '>=3.9.0'
 REQUIRED = read_file("requirements.txt").splitlines()
 
@@ -41,8 +41,8 @@ setup(
     long_description=LONG_DESC,
     long_description_content_type='text/markdown',
     url=URL,
-    # author=AUTHOR,
-    # author_email=EMAIL,
+    author=AUTHOR,
+    author_email=EMAIL,
     classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
