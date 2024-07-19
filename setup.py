@@ -16,7 +16,8 @@ def read_file(file: str):
 def read_version():
     """Read __version__.py"""
     data = dict()
-    project = NAME.lower().replace("-", "_").replace(" ", "_")
+    # project = NAME.lower().replace("-", "_").replace(" ", "_")
+    project = NAME.replace("-", "_").replace(" ", "_")
     with open(path.join(root, project, '__version__.py')) as f:
         exec(f.read(), data)
         return data['__version__']
