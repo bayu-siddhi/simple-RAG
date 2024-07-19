@@ -7,4 +7,4 @@ from simple_RAG.embedding import Embedding
 from simple_RAG.query_config import QueryConfig
 from simple_RAG.rag_pipeline import RAGPipeline
 from simple_RAG.embedding_model import EmbeddingModel
-from simple_RAG.exception.file_not_found_exception import FileNotFoundException
+from simple_RAG.file_not_found_exception import FileNotFoundException

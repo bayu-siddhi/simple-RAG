@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import pandas as pd
 from simple_RAG.helper import Helper
-from simple_RAG.exception.file_not_found_exception import FileNotFoundException
+from simple_RAG.file_not_found_exception import FileNotFoundException
 
 
 class Embedding:

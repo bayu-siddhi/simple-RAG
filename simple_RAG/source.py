@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from spacy.lang.en import English
 from simple_RAG.helper import Helper
-from simple_RAG.exception.file_not_found_exception import FileNotFoundException
+from simple_RAG.file_not_found_exception import FileNotFoundException
 
 
 class Source:
