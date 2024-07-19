@@ -23,7 +23,7 @@ def read_version():
 
 
 # Package meta-data
-NAME = 'simple-rag'
+NAME = 'simple_RAG'
 VERSION = read_version()
 SHORT_DESC = 'library to try using RAG from PDF files. Runs using the LLM model and embedding model from HuggingFace'
 LONG_DESC = read_file('README.md')
