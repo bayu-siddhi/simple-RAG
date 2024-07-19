@@ -3,7 +3,6 @@ import re
 import pymupdf
 import numpy as np
 import pandas as pd
-from dotenv import load_dotenv
 from spacy.lang.en import English
 from simple_RAG.helper import Helper
 from simple_RAG.exception.file_not_found_exception import FileNotFoundException

@@ -8,8 +8,8 @@ class Retrieval:
 
     @staticmethod
     def retrieve_context(
-            query_embedding: torch.tensor,
-            embeddings: torch.tensor,
+            query_embedding: torch.Tensor,
+            embeddings: torch.Tensor,
             df_embeddings: pd.DataFrame,
             top_k_chunks: int = 3
     ) -> (torch.Tensor, torch.Tensor, pd.DataFrame):
