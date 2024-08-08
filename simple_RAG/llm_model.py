@@ -33,11 +33,14 @@ class LLM:
             pretrained_model_name_or_path=self.model_name_or_path
         )
 
-        # Raise OSError or ValueError
-        # Jika use_quantization_config = True maka pasti pakai 'cuda'
+        """
+        - Raise OSError or ValueError
+        - If use_quantization_config = True then definitely use 'cuda'
+        - torch.float16 cannot run with cpu device, source: https://github.com/huggingface/diffusers/issues/1659
+        """
         self.model = AutoModelForCausalLM.from_pretrained(
             pretrained_model_name_or_path=self.model_name_or_path,
-            torch_dtype=torch.float16,  # datatype to use in LLM
+            torch_dtype=torch.float16 if self.device == 'cuda' else torch.float32,  # datatype to use in LLM
             quantization_config=quantization_config if self.use_quantization_config else None,
             low_cpu_mem_usage=False,  # use full memory
             attn_implementation=attn_implementation  # which attention version to use

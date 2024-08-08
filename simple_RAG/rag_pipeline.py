@@ -39,7 +39,7 @@ class RAGPipeline:
         self.embeddings = self.embedding_model.encode(
             filtered_chunks_or_query=source.filtered_chunks
         )
-        self.embeddings.save_to_csv(f"{pdf_path[:-4]}_embeddings.csv")
+        self.embeddings.save_to_csv(f"{pdf_path[:-4]}_{self.device}_embeddings.csv")
 
     def load_embeddings(self, csv_path: str):
         self.embeddings = Embedding(device=self.device)
@@ -51,8 +51,8 @@ class RAGPipeline:
             query_config: QueryConfig
     ) -> str:
 
-        query_embedding = self.embedding_model.encode(query)
         if query_config.use_context:
+            query_embedding = self.embedding_model.encode(query)
             scores, indices, df_context = Retrieval.retrieve_context(
                 query_embedding.embedding,
                 self.embeddings.embedding,
