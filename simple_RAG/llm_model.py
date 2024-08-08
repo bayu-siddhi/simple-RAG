@@ -66,20 +66,27 @@ class LLM:
             prompt = self.__prompt_formatter(role, query, use_context)
 
         input_ids = self.tokenizer(prompt, return_tensors='pt').to(self.device)
-        outputs = self.model.generate(
-            **input_ids,
-            temperature=temperature,
-            do_sample=True,
-            max_new_tokens=max_new_tokens
-        )
+        if temperature != 0.0:
+            outputs = self.model.generate(
+                **input_ids,
+                temperature=temperature,
+                do_sample=True,
+                max_new_tokens=max_new_tokens
+            )
+        else:
+            outputs = self.model.generate(
+                **input_ids,
+                temperature=temperature,
+                do_sample=False,
+                max_new_tokens=max_new_tokens
+            )
 
         outputs_decoded = self.tokenizer.decode(outputs[0])
 
         if format_response_text:
             outputs_decoded = outputs_decoded.replace(prompt, "").\
                 replace("<bos>", "").\
-                replace("<eos>", "").\
-                replace("Sure, here is the answer to the user query:\n\n", "")
+                replace("<eos>", "")
 
         return outputs_decoded
 
