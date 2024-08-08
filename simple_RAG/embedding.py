@@ -3,7 +3,6 @@ import torch
 import numpy as np
 import pandas as pd
 from simple_RAG.helper import Helper
-from simple_RAG.file_not_found_exception import FileNotFoundException
 
 
 class Embedding:
@@ -24,7 +23,7 @@ class Embedding:
 
     def load_from_csv(self, csv_path: str) -> None:
         if not os.path.exists(csv_path):
-            raise FileNotFoundException(f"File {csv_path} doesn't exist.")
+            raise FileNotFoundError(f"File {csv_path} doesn't exist.")
         self.__to_dataframe(csv_path)
         self.__to_torch_tensor()
 

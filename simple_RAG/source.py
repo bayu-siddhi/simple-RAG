@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 from spacy.lang.en import English
 from simple_RAG.helper import Helper
-from simple_RAG.file_not_found_exception import FileNotFoundException
 
 
 class Source:
@@ -23,7 +22,8 @@ class Source:
 
     def __load_pdf(self) -> None:
         if not os.path.exists(self.pdf_path):
-            raise FileNotFoundException(f"File {self.pdf_path} doesn't exist.")
+            raise FileNotFoundError(f"File {self.pdf_path} doesn't exist.")
+            # raise FileNotFoundException(f"File {self.pdf_path} doesn't exist.")
 
     def __open_and_extract_pdf(self) -> None:
         nlp = English()
