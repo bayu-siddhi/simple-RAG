@@ -2,164 +2,262 @@ import unittest
 import pandas as pd
 from simple_RAG import QueryConfig
 from simple_RAG import RAGPipeline
-from simple_RAG import FileNotFoundException
+from tests.variable import Variable
 
 
 class RAGPipelineTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.device = 'cuda'
-        self.llm_model_name_or_path = './google/gemma-2b-it'
-        self.llm_model_name_or_path_failed = './google/not-found'
-        self.embedding_model_name_or_path = 'all-mpnet-base-v2'
-        self.embedding_model_name_or_path_failed = 'not-found'
-        self.use_quantization_config = True
-        self.pdf_path = './data/test.pdf'
-        self.pdf_path_failed = './data/not_found.pdf'
-        self.embeddings_path = './data/test_embeddings.csv'
-        self.embeddings_path_failed = './data/not_found_embeddings.csv'
+        self.variable = Variable()
 
-        self.role = 'user'
-        self.query = 'what is Retrieval Augmented Generation?'
-        self.temperature = 0.7
-        self.max_new_tokens = 256
-        self.use_context_true = True
-        self.use_context_false = False
-        self.top_k_sentence_chunks = 2
-        self.format_answer_text = True
-
-    def test_create_rag_pipeline_success(self):
+    def test_create_cpu_rag_pipeline_success(self):
         rag = RAGPipeline(
-            self.device,
-            self.llm_model_name_or_path,
-            self.embedding_model_name_or_path,
-            self.use_quantization_config
+            self.variable.device_cpu,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_false
         )
 
-        self.assertEqual(rag.device, self.device)
-        self.assertEqual(rag.llm_model_name_or_path, self.llm_model_name_or_path)
-        self.assertEqual(rag.use_quantization_config, self.use_quantization_config)
+        self.assertEqual(rag.device, self.variable.device_cpu)
+        self.assertEqual(rag.llm_model_name_or_path, self.variable.llm_model_success)
+        self.assertEqual(rag.use_quantization_config, self.variable.use_quantization_config_false)
 
-        self.assertEqual(rag.llm.device, self.device)
-        self.assertEqual(rag.llm.model_name_or_path, self.llm_model_name_or_path)
-        self.assertEqual(rag.llm.use_quantization_config, self.use_quantization_config)
+        self.assertEqual(rag.llm.device, self.variable.device_cpu)
+        self.assertEqual(rag.llm.model_name_or_path, self.variable.llm_model_success)
+        self.assertEqual(rag.llm.use_quantization_config, self.variable.use_quantization_config_false)
+        self.assertIsNotNone(rag.llm.model)
+        self.assertIsNotNone(rag.llm.tokenizer)
+
+    def test_create_cuda_rag_pipeline_without_quantization_config_success(self):
+        rag = RAGPipeline(
+            self.variable.device_cuda,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_false
+        )
+
+        self.assertEqual(rag.device, self.variable.device_cuda)
+        self.assertEqual(rag.llm_model_name_or_path, self.variable.llm_model_success)
+        self.assertEqual(rag.use_quantization_config, self.variable.use_quantization_config_false)
+
+        self.assertEqual(rag.llm.device, self.variable.device_cuda)
+        self.assertEqual(rag.llm.model_name_or_path, self.variable.llm_model_success)
+        self.assertEqual(rag.llm.use_quantization_config, self.variable.use_quantization_config_false)
+        self.assertIsNotNone(rag.llm.model)
+        self.assertIsNotNone(rag.llm.tokenizer)
+
+    def test_create_cuda_rag_pipeline_with_quantization_config_success(self):
+        rag = RAGPipeline(
+            self.variable.device_cuda,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_true
+        )
+
+        self.assertEqual(rag.device, self.variable.device_cuda)
+        self.assertEqual(rag.llm_model_name_or_path, self.variable.llm_model_success)
+        self.assertEqual(rag.use_quantization_config, self.variable.use_quantization_config_true)
+
+        self.assertEqual(rag.llm.device, self.variable.device_cuda)
+        self.assertEqual(rag.llm.model_name_or_path, self.variable.llm_model_success)
+        self.assertEqual(rag.llm.use_quantization_config, self.variable.use_quantization_config_true)
         self.assertIsNotNone(rag.llm.model)
         self.assertIsNotNone(rag.llm.tokenizer)
 
     def test_create_rag_pipeline_llm_model_not_found(self):
         with self.assertRaises(OSError):
             rag = RAGPipeline(
-                self.device,
-                self.llm_model_name_or_path_failed,
-                self.embedding_model_name_or_path,
-                self.use_quantization_config
+                self.variable.device_cpu,
+                self.variable.llm_model_failed,
+                self.variable.embedding_model_success,
+                self.variable.use_quantization_config_false
             )
 
     def test_create_rag_pipeline_embedding_model_not_found(self):
         with self.assertRaises(OSError):
             rag = RAGPipeline(
-                self.device,
-                self.llm_model_name_or_path,
-                self.embedding_model_name_or_path_failed,
-                self.use_quantization_config
+                self.variable.device_cpu,
+                self.variable.llm_model_success,
+                self.variable.embedding_model_failed,
+                self.variable.use_quantization_config_false
             )
 
-    def test_create_new_embeddings_for_rag_pipeline_success(self):
+    def test_create_new_cpu_embeddings_success(self):
         rag = RAGPipeline(
-            self.device,
-            self.llm_model_name_or_path,
-            self.embedding_model_name_or_path,
-            self.use_quantization_config
+            self.variable.device_cuda,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_false
         )
 
-        rag.new_embeddings(self.pdf_path)
+        rag.new_embeddings(self.variable.pdf_path_success)
 
-        df = pd.read_csv(f"{self.pdf_path[:-4]}_embeddings.csv", sep=',')
+        df = pd.read_csv(f"{self.variable.pdf_path_success[:-4]}_{self.variable.device_cpu}_embeddings.csv", sep=',')
         self.assertListEqual(list(df.columns), ['page_index', 'chunk', 'num_chunk_token', 'embedding'])
         self.assertEqual(len(df), len(rag.embeddings.embedding))
 
-    def test_create_new_embeddings_for_rag_pipeline_pdf_not_found(self):
+    def test_create_new_cuda_embeddings_success(self):
         rag = RAGPipeline(
-            self.device,
-            self.llm_model_name_or_path,
-            self.embedding_model_name_or_path,
-            self.use_quantization_config
+            self.variable.device_cuda,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_true
         )
 
-        with self.assertRaises(FileNotFoundException):
-            rag.new_embeddings(self.pdf_path_failed)
+        rag.new_embeddings(self.variable.pdf_path_success)
 
-    def test_create_load_embeddings_for_rag_pipeline_success(self):
-        rag = RAGPipeline(
-            self.device,
-            self.llm_model_name_or_path,
-            self.embedding_model_name_or_path,
-            self.use_quantization_config
-        )
-
-        rag.load_embeddings(self.embeddings_path)
-
-        df = pd.read_csv(f"{self.pdf_path[:-4]}_embeddings.csv", sep=',')
+        df = pd.read_csv(f"{self.variable.pdf_path_success[:-4]}_{self.variable.device_cuda}_embeddings.csv", sep=',')
         self.assertListEqual(list(df.columns), ['page_index', 'chunk', 'num_chunk_token', 'embedding'])
         self.assertEqual(len(df), len(rag.embeddings.embedding))
 
-    def test_create_load_embeddings_for_rag_pipeline_embeddings_not_found(self):
+    def test_create_new_embeddings_pdf_not_found(self):
         rag = RAGPipeline(
-            self.device,
-            self.llm_model_name_or_path,
-            self.embedding_model_name_or_path,
-            self.use_quantization_config
+            self.variable.device_cpu,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_false
         )
 
-        with self.assertRaises(FileNotFoundException):
-            rag.load_embeddings(self.embeddings_path_failed)
+        with self.assertRaises(FileNotFoundError):
+            rag.new_embeddings(self.variable.pdf_path_failed)
 
-    def test_ask_rag_pipeline_with_context_success(self):
+    def test_load_cpu_embeddings_success(self):
         rag = RAGPipeline(
-            self.device,
-            self.llm_model_name_or_path,
-            self.embedding_model_name_or_path,
-            self.use_quantization_config
+            self.variable.device_cpu,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_false
         )
 
-        rag.load_embeddings(self.embeddings_path)
+        rag.load_embeddings(self.variable.embedding_csv_cpu_success)
+
+        df = pd.read_csv(f"{self.variable.pdf_path_success[:-4]}_{self.variable.device_cpu}_embeddings.csv", sep=',')
+        self.assertListEqual(list(df.columns), ['page_index', 'chunk', 'num_chunk_token', 'embedding'])
+        self.assertEqual(len(df), len(rag.embeddings.embedding))
+
+    def test_load_cuda_embeddings_success(self):
+        rag = RAGPipeline(
+            self.variable.device_cuda,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_true
+        )
+
+        rag.load_embeddings(self.variable.embedding_csv_cuda_success)
+
+        df = pd.read_csv(f"{self.variable.pdf_path_success[:-4]}_{self.variable.device_cuda}_embeddings.csv", sep=',')
+        self.assertListEqual(list(df.columns), ['page_index', 'chunk', 'num_chunk_token', 'embedding'])
+        self.assertEqual(len(df), len(rag.embeddings.embedding))
+
+    def test_load_embeddings_not_found(self):
+        rag = RAGPipeline(
+            self.variable.device_cpu,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_false
+        )
+
+        with self.assertRaises(FileNotFoundError):
+            rag.load_embeddings(self.variable.embedding_csv_failed)
+
+    def test_ask_cpu_rag_pipeline_without_context_success(self):
+        rag = RAGPipeline(
+            self.variable.device_cpu,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_false
+        )
 
         query_config = QueryConfig(
-            self.role,
-            self.temperature,
-            self.max_new_tokens,
-            self.use_context_true,
-            self.top_k_sentence_chunks,
-            self.format_answer_text
+            self.variable.role,
+            self.variable.temperature,
+            self.variable.max_new_tokens,
+            self.variable.use_context_false,
+            self.variable.n_chunks,
+            self.variable.format_response_text
         )
 
         response = rag.query(
-            self.query,
+            self.variable.query,
             query_config
         )
 
         self.assertIsInstance(response, str)
         self.assertGreater(len(response), 0)
 
-    def test_ask_rag_pipeline_without_context_success(self):
+    def test_ask_cuda_rag_pipeline_using_quantization_config_without_context_success(self):
         rag = RAGPipeline(
-            self.device,
-            self.llm_model_name_or_path,
-            self.embedding_model_name_or_path,
-            self.use_quantization_config
+            self.variable.device_cpu,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_true
         )
 
         query_config = QueryConfig(
-            self.role,
-            self.temperature,
-            self.max_new_tokens,
-            self.use_context_false,
-            self.top_k_sentence_chunks,
-            self.format_answer_text
+            self.variable.role,
+            self.variable.temperature,
+            self.variable.max_new_tokens,
+            self.variable.use_context_false,
+            self.variable.n_chunks,
+            self.variable.format_response_text
         )
 
         response = rag.query(
-            self.query,
+            self.variable.query,
+            query_config
+        )
+
+        self.assertIsInstance(response, str)
+        self.assertGreater(len(response), 0)
+
+    def test_ask_cpu_rag_pipeline_with_context_success(self):
+        rag = RAGPipeline(
+            self.variable.device_cpu,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_false
+        )
+
+        rag.load_embeddings(self.variable.embedding_csv_cpu_success)
+
+        query_config = QueryConfig(
+            self.variable.role,
+            self.variable.temperature,
+            self.variable.max_new_tokens,
+            self.variable.use_context_true,
+            self.variable.n_chunks,
+            self.variable.format_response_text
+        )
+
+        response = rag.query(
+            self.variable.query,
+            query_config
+        )
+
+        self.assertIsInstance(response, str)
+        self.assertGreater(len(response), 0)
+
+    def test_ask_cuda_rag_pipeline_with_context_success(self):
+        rag = RAGPipeline(
+            self.variable.device_cuda,
+            self.variable.llm_model_success,
+            self.variable.embedding_model_success,
+            self.variable.use_quantization_config_true
+        )
+
+        rag.load_embeddings(self.variable.embedding_csv_cuda_success)
+
+        query_config = QueryConfig(
+            self.variable.role,
+            self.variable.temperature,
+            self.variable.max_new_tokens,
+            self.variable.use_context_true,
+            self.variable.n_chunks,
+            self.variable.format_response_text
+        )
+
+        response = rag.query(
+            self.variable.query,
             query_config
         )
 

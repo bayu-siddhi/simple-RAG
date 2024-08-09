@@ -1,20 +1,18 @@
 import unittest
 from simple_RAG import Source
-from simple_RAG import FileNotFoundException
+from tests.variable import Variable
 
 
 class SourceTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.pdf_path_success = 'data/test.pdf'
-        self.pdf_path_failed = 'data/not-found.pdf'
-        self.min_token_length_per_chunk = 30
+        self.variable = Variable()
 
     def test_open_and_extract_pdf_success(self) -> None:
         """Test open and read (extract) all PDF pages to chunks (success)"""
-        document = Source(self.pdf_path_success, self.min_token_length_per_chunk)
-        self.assertEqual(document.pdf_path, self.pdf_path_success)
-        self.assertEqual(document.min_token_length_per_chunk, self.min_token_length_per_chunk)
+        document = Source(self.variable.pdf_path_success, self.variable.min_token_length_per_chunk)
+        self.assertEqual(document.pdf_path, self.variable.pdf_path_success)
+        self.assertEqual(document.min_token_length_per_chunk, self.variable.min_token_length_per_chunk)
         self.assertIsInstance(document.content, list)
         self.assertIsInstance(document.content[0], dict)
         self.assertIsInstance(document.all_chunks, list)
@@ -40,8 +38,8 @@ class SourceTestCase(unittest.TestCase):
 
     def test_open_and_extract_pdf_failed(self) -> None:
         """Test open and read (extract) all PDF pages to chunks (file not found)"""
-        with self.assertRaises(FileNotFoundException):
-            Source(self.pdf_path_failed, self.min_token_length_per_chunk)
+        with self.assertRaises(FileNotFoundError):
+            Source(self.variable.pdf_path_failed, self.variable.min_token_length_per_chunk)
 
 
 if __name__ == '__main__':
