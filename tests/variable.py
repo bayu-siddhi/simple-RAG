@@ -22,6 +22,5 @@ class Variable:
     n_chunks = 2
     temperature = 0.5
     max_new_tokens = 128
-    format_response_text = True
     use_context_true = True
     use_context_false = False

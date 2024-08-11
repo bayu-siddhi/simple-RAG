@@ -52,8 +52,7 @@ class LLMTestCase(unittest.TestCase):
             use_context=False,
             df_context=None,
             temperature=self.variable.temperature,
-            max_new_tokens=self.variable.max_new_tokens,
-            format_response_text=self.variable.format_response_text
+            max_new_tokens=self.variable.max_new_tokens
         )
 
         self.assertIsInstance(response, str)
@@ -71,8 +70,7 @@ class LLMTestCase(unittest.TestCase):
             use_context=False,
             df_context=None,
             temperature=self.variable.temperature,
-            max_new_tokens=self.variable.max_new_tokens,
-            format_response_text=self.variable.format_response_text
+            max_new_tokens=self.variable.max_new_tokens
         )
 
         self.assertIsInstance(response, str)
@@ -101,8 +99,7 @@ class LLMTestCase(unittest.TestCase):
             use_context=True,
             df_context=df_context,
             temperature=self.variable.temperature,
-            max_new_tokens=self.variable.max_new_tokens,
-            format_response_text=self.variable.format_response_text
+            max_new_tokens=self.variable.max_new_tokens
         )
 
         self.assertIsInstance(response, str)
@@ -134,8 +131,7 @@ class LLMTestCase(unittest.TestCase):
             use_context=True,
             df_context=df_context,
             temperature=self.variable.temperature,
-            max_new_tokens=self.variable.max_new_tokens,
-            format_response_text=self.variable.format_response_text
+            max_new_tokens=self.variable.max_new_tokens
         )
 
         self.assertIsInstance(response, str)

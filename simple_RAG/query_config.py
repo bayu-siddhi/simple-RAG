@@ -6,8 +6,7 @@ class QueryConfig:
             temperature: float = 0.7,
             max_new_tokens: int = 512,
             use_context: bool = True,
-            top_k_sentence_chunks: int = 3,
-            format_response_text: bool = True
+            top_k_sentence_chunks: int = 3
     ) -> None:
 
         self.role = role
@@ -15,4 +14,3 @@ class QueryConfig:
         self.max_new_tokens = max_new_tokens
         self.use_context = use_context
         self.top_k_sentence_chunks = top_k_sentence_chunks
-        self.format_response_text = format_response_text

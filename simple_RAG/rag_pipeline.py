@@ -1,3 +1,4 @@
+import pandas as pd
 from simple_RAG.llm_model import LLM
 from simple_RAG.helper import Helper
 from simple_RAG.source import Source
@@ -68,8 +69,7 @@ class RAGPipeline:
             use_context=query_config.use_context,
             df_context=df_context,
             temperature=query_config.temperature,
-            max_new_tokens=query_config.max_new_tokens,
-            format_response_text=query_config.format_response_text
+            max_new_tokens=query_config.max_new_tokens
         )
 
         return response

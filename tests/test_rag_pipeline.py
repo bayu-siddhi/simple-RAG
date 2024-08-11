@@ -173,8 +173,7 @@ class RAGPipelineTestCase(unittest.TestCase):
             self.variable.temperature,
             self.variable.max_new_tokens,
             self.variable.use_context_false,
-            self.variable.n_chunks,
-            self.variable.format_response_text
+            self.variable.n_chunks
         )
 
         response = rag.query(
@@ -198,8 +197,7 @@ class RAGPipelineTestCase(unittest.TestCase):
             self.variable.temperature,
             self.variable.max_new_tokens,
             self.variable.use_context_false,
-            self.variable.n_chunks,
-            self.variable.format_response_text
+            self.variable.n_chunks
         )
 
         response = rag.query(
@@ -225,8 +223,7 @@ class RAGPipelineTestCase(unittest.TestCase):
             self.variable.temperature,
             self.variable.max_new_tokens,
             self.variable.use_context_true,
-            self.variable.n_chunks,
-            self.variable.format_response_text
+            self.variable.n_chunks
         )
 
         response = rag.query(
@@ -237,7 +234,7 @@ class RAGPipelineTestCase(unittest.TestCase):
         self.assertIsInstance(response, str)
         self.assertGreater(len(response), 0)
 
-    def test_ask_cuda_rag_pipeline_with_context_success(self):
+    def test_ask_cuda_rag_pipeline_using_quantization_config_with_context_success(self):
         rag = RAGPipeline(
             self.variable.device_cuda,
             self.variable.llm_model_success,
@@ -252,8 +249,7 @@ class RAGPipelineTestCase(unittest.TestCase):
             self.variable.temperature,
             self.variable.max_new_tokens,
             self.variable.use_context_true,
-            self.variable.n_chunks,
-            self.variable.format_response_text
+            self.variable.n_chunks
         )
 
         response = rag.query(

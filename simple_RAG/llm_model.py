@@ -56,8 +56,7 @@ class LLM:
             use_context: bool = False,
             df_context: pd.DataFrame | None = None,
             temperature: float = 0.7,
-            max_new_tokens: int = 512,
-            format_response_text: bool = True
+            max_new_tokens: int = 512
     ) -> str:
 
         if use_context:
@@ -82,11 +81,9 @@ class LLM:
             )
 
         outputs_decoded = self.tokenizer.decode(outputs[0])
-
-        if format_response_text:
-            outputs_decoded = outputs_decoded.replace(prompt, "").\
-                replace("<bos>", "").\
-                replace("<eos>", "")
+        outputs_decoded = outputs_decoded.replace(prompt, "").\
+            replace("<bos>", "").\
+            replace("<eos>", "")
 
         return outputs_decoded
 
