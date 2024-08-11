@@ -25,8 +25,8 @@ class Retrieval:
         scores = scores.cpu()
         indices = indices.cpu()
 
-        # Create a list of context items and add score to it
-        df_context = df_embeddings.iloc[indices]
+        # https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+        df_context = df_embeddings.iloc[indices].copy()
         df_context.loc[:, 'score'] = scores
 
         return scores, indices, df_context
