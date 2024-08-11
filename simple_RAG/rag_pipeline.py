@@ -50,7 +50,7 @@ class RAGPipeline:
             self,
             query: str,
             query_config: QueryConfig
-    ) -> str:
+    ) -> tuple[str, pd.DataFrame]:
 
         if query_config.use_context:
             query_embedding = self.embedding_model.encode(query)
@@ -60,6 +60,7 @@ class RAGPipeline:
                 self.embeddings.df_embedding,
                 query_config.top_k_sentence_chunks
             )
+            df_context = df_context.loc[:, ['page_index', 'score', 'num_chunk_token', 'chunk']]
         else:
             df_context = None
 
@@ -72,4 +73,4 @@ class RAGPipeline:
             max_new_tokens=query_config.max_new_tokens
         )
 
-        return response
+        return response, df_context

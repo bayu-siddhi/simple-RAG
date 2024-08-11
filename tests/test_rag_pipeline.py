@@ -176,13 +176,14 @@ class RAGPipelineTestCase(unittest.TestCase):
             self.variable.n_chunks
         )
 
-        response = rag.query(
+        response, context = rag.query(
             self.variable.query,
             query_config
         )
 
         self.assertIsInstance(response, str)
         self.assertGreater(len(response), 0)
+        self.assertIsNone(context)
 
     def test_ask_cuda_rag_pipeline_using_quantization_config_without_context_success(self):
         rag = RAGPipeline(
@@ -200,13 +201,14 @@ class RAGPipelineTestCase(unittest.TestCase):
             self.variable.n_chunks
         )
 
-        response = rag.query(
+        response, context = rag.query(
             self.variable.query,
             query_config
         )
 
         self.assertIsInstance(response, str)
         self.assertGreater(len(response), 0)
+        self.assertIsNone(context)
 
     def test_ask_cpu_rag_pipeline_with_context_success(self):
         rag = RAGPipeline(
@@ -226,13 +228,15 @@ class RAGPipelineTestCase(unittest.TestCase):
             self.variable.n_chunks
         )
 
-        response = rag.query(
+        response, context = rag.query(
             self.variable.query,
             query_config
         )
 
         self.assertIsInstance(response, str)
         self.assertGreater(len(response), 0)
+        self.assertIsInstance(context, pd.DataFrame)
+        self.assertEqual(len(context), self.variable.n_chunks)
 
     def test_ask_cuda_rag_pipeline_using_quantization_config_with_context_success(self):
         rag = RAGPipeline(
@@ -252,13 +256,15 @@ class RAGPipelineTestCase(unittest.TestCase):
             self.variable.n_chunks
         )
 
-        response = rag.query(
+        response, context = rag.query(
             self.variable.query,
             query_config
         )
 
         self.assertIsInstance(response, str)
         self.assertGreater(len(response), 0)
+        self.assertIsInstance(context, pd.DataFrame)
+        self.assertEqual(len(context), self.variable.n_chunks)
 
 
 if __name__ == '__main__':
